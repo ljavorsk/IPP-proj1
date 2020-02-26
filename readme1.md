@@ -24,6 +24,7 @@ There are 4 kinds of statistics that can be printed.
 `--coments` for number of comments in code,
 `--jumps` for number of jumps done in code,
 `--labels` for all unique labels located in code.
+To see a short help/manual use `--help` option.
 
 ## Parsing process
 
@@ -56,3 +57,4 @@ Every argument have it's own order number stored in the name `argX` where `X` is
 
 The bonus task for this project was the statistics output which is mentioned above.
 To count the specific stats, I used global variables named `numberOf*`.
+Statistics are appended to the file specified in `--stats` argument.
