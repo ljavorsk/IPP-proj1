@@ -2,7 +2,7 @@ Implementační dokumentace k 1. úloze do IPP 2019/2020
 Jméno a příjmení: Lukas Javorsky  
 Login: xjavor20  
 
-### Parse.php
+# Parse.php
 
 At the start of the script, it will start looking for a possible comments (for bonus STATP)  
 and then it will check for the header correctness.  
@@ -20,9 +20,9 @@ To get these statistics you have to pass `--stats=<file>` option.
 This option doesn't have to be first, but if it's not given, and some of the others is, the script ends with an error.
 The `<file>` have to be writable file, where the statistics should be printed.
 There are 4 kinds of statistics that can be printed.
-`--loc` for number of instructions that have been used.
-`--coments` for number of comments in code
-`--jumps` for number of jumps done in code.
+`--loc` for number of instructions that have been used,
+`--coments` for number of comments in code,
+`--jumps` for number of jumps done in code,
 `--labels` for all unique labels located in code.
 
 ## Parsing process
@@ -32,7 +32,7 @@ Next thing this script does, is to check for number of arguments in the instruct
 If the number of arguments is correct, the opcode (first word in instruction) is checked.
 If it's correct too, the lexical and syntax analyzis for `<symb>`,`<var>`,`<label>` or `<type>`.
 
-# Regex check
+### Regex check
 
 The lexical check is made by running the function `preg_grep()` with specific regex and argument as parameters.
 There are 4 functions in script that ensures the lexical correctness of arguments.
