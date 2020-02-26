@@ -18,7 +18,6 @@ $outputFileErr = 12;
 $wrongHeaderErr = 21;
 $wrongOpCodeErr = 22;
 $lexOrSyntaxErr = 23;
-$internalErr = 99;
 
 $instructions = array (
     //0 args                            
@@ -36,13 +35,21 @@ $instructions = array (
 
 $uniqLabels = array();     // Array for unique labels for bonus solution
 
-    // Prints the error to stderr
+    /**
+     * Prints the error message on stderr
+     * @param $message: error message
+     * @param $rc: exit code
+     */
     function err_msg($message, $rc){
         fwrite(STDERR, "Error: $message\n");
         exit($rc);
     }
 
-    // Checks the variable validity
+    /**
+     * Checks if the variable have correct form
+     * @param $variable: var value
+     * @return: true if succeeded, false if fails
+     */
     function checkVar($variable){
         if (preg_match('/^[L,T,G]F@[a-zA-Z_\-\$&%*!?][0-9a-zA-Z_\-\$&%*!?]*$/',$variable))
             return true;
@@ -50,6 +57,11 @@ $uniqLabels = array();     // Array for unique labels for bonus solution
             return false;
     }
 
+    /**
+     * Checks if the constant have correct form
+     * @param $constant: const value
+     * @return: true if succeeded, false if fails
+     */
     function checkConst($constant){
         if (preg_match('/^nil@nil$/', $constant));
         else if (preg_match('/^bool@(true|false)$/', $constant));
@@ -61,6 +73,11 @@ $uniqLabels = array();     // Array for unique labels for bonus solution
         return true;
     }
 
+    /**
+     * Checks if the label have correct form
+     * @param $label: label value
+     * @return: true if succeeded, false if fails
+     */
     function checkLabel($label){
         if (preg_match('/^[a-zA-Z_\-\$&%*!?][0-9a-zA-Z_\-\$&%*!?]*$/',$label))
             return true;
@@ -68,6 +85,11 @@ $uniqLabels = array();     // Array for unique labels for bonus solution
             return false;
     }
 
+    /**
+     * Checks if the type have correct form
+     * @param $type: type value
+     * @return: true if succeeded, false if fails
+     */
     function checkType($type){
         if (preg_match('/^(int|string|bool)$/',$type))
             return true;
@@ -75,6 +97,12 @@ $uniqLabels = array();     // Array for unique labels for bonus solution
             return false;
     }
 
+    /**
+     * Decides if the error is wrong opcode or syntax
+     * @param $instruction: instruction
+     * @param $unknownOpCodetErr: error message
+     * @param $instArgErr: error message
+     */
     function decideSyntaxOrWrongOpcodeErr($instruction, $unknownOpCodetErr, $instArgErr){
         global $instructions, $wrongOpCodeErr, $lexOrSyntaxErr;
         if (!in_array($instruction, $instructions))
@@ -83,6 +111,12 @@ $uniqLabels = array();     // Array for unique labels for bonus solution
             err_msg($instArgErr, $lexOrSyntaxErr);
     }
 
+    /**
+     * Creates xml format for argument
+     * @param $argOrder: order of argument
+     * @param $argType: type of argument
+     * @param $argValue: value of argument
+     */
     function xmlCreateArgument($argOrder,$argType,$argValue){
         global $xmlWrite;
 
@@ -94,7 +128,11 @@ $uniqLabels = array();     // Array for unique labels for bonus solution
         xmlwriter_end_element($xmlWrite);
     }
 
-    // Decides what instruction is on the line, and check its syntax
+    /**
+     * Analyzing the instruction on the line and creates it's xml format if everything passes
+     * @param $lineCodeArray: array of strings on current line
+     * @param $instruction: opcode of instruction
+     */
     function whatInstruction($lineCodeArray, $instruction){
         global $numberOfInstructions, $numberOfLabels, $numberOfJumps, $uniqLabels, $lexOrSyntaxErr, $wrongOpCodeErr, $xmlWrite;
 
@@ -309,7 +347,6 @@ $uniqLabels = array();     // Array for unique labels for bonus solution
         xmlwriter_end_element($xmlWrite); // End the instruction element
     }
 
-    $stats = false;
     $longopts = array(
       "stats:",
       "loc",
@@ -356,41 +393,6 @@ $uniqLabels = array();     // Array for unique labels for bonus solution
         }
         else {
             return err_msg("--help cannot take any more arguments.", $wrongParamErr);
-        }
-    }
-
-    if (count($argv) >= 2){
-        if (preg_grep('/--stats=.*/', $argv)){
-            $stats = true;
-            $file = $my_args["stats"];
-            $loc_order = 0;
-            $comments_order = 0;
-            $labels_order = 0;
-            $jumps_order = 0;
-
-            if (array_search("--loc", $argv)){
-                $temp = array_keys($my_args);
-                $loc_pos = array_search("loc", $temp);
-            }
-            if (array_search("--comments", $argv)){
-                $temp = array_keys($my_args);
-                $comments_order = array_search("loc", $temp);
-            }
-            if (array_search("--labels", $argv)){
-                $temp = array_keys($my_args);
-                $labels_order = array_search("loc", $temp);
-            }
-            if (array_search("--jumps", $argv)){
-                $temp = array_keys($my_args);
-                $jumps_order = array_search("loc", $temp);
-            }
-
-            $statFile = fopen($file, "w");
-            if(!$statFile)
-                err_msg("File for statistics cannot be opened", $outputFileErr);
-        }
-        else {
-            err_msg("You're trying to specify stats without '--stats' option", $wrongParamErr);
         }
     }
 
@@ -472,6 +474,42 @@ $uniqLabels = array();     // Array for unique labels for bonus solution
         xmlwriter_end_attribute($xmlWrite);
         whatInstruction($lineCodeArray, $inst);
 
+    }
+
+    // Bonus statistics
+    if (count($argv) >= 2){
+        if (preg_grep('/--stats=.*/', $argv)){
+            $statsFile = $my_args["stats"];
+
+            foreach ($argv as $i => $option){
+                if ($i < 1)
+                    continue;
+                switch ($option){
+                    case "--stats=$statsFile":
+                        break;
+                    case "--loc":
+                        if (file_put_contents($statsFile, "$numberOfInstructions\n",FILE_APPEND) == false)
+                            err_msg("File for statistics cannot be opened", $outputFileErr);
+                        break;
+                    case "--comments":
+                        if (file_put_contents($statsFile, "$numberOfComments\n",FILE_APPEND) == false)
+                            err_msg("File for statistics cannot be opened", $outputFileErr);
+                        break;
+                    case "--labels":
+                        if (file_put_contents($statsFile, "$numberOfLabels\n",FILE_APPEND) == false)
+                            err_msg("File for statistics cannot be opened", $outputFileErr);
+                        break;
+                    case "--jumps":
+                        if (file_put_contents($statsFile, "$numberOfJumps\n",FILE_APPEND) == false)
+                            err_msg("File for statistics cannot be opened", $outputFileErr);
+                        break;
+                    default:
+                        err_msg("You're trying to specify stats without '--stats' option", $wrongParamErr);
+                }
+            }
+        }
+        else
+            err_msg("You're trying to specify stats without '--stats' option", $wrongParamErr);
     }
 
     // End of the XML document
