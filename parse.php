@@ -33,7 +33,7 @@ $instructions = array (
     "ADD", "SUB", "MUL", "IDIV", "LT", "GT", "EQ", "AND", "OR", "STRI2INT", "CONCAT",
     "GETCHAR", "SETCHAR", "JUMPIFEQ", "JUMPIFNEQ");
 
-$uniqLabels = array();     // Array for unique labels for bonus solution
+$uniqueLabels = array();     // Array for unique labels for bonus solution
 
     /**
      * Prints the error message on stderr
@@ -134,7 +134,7 @@ $uniqLabels = array();     // Array for unique labels for bonus solution
      * @param $instruction: opcode of instruction
      */
     function whatInstruction($lineCodeArray, $instruction){
-        global $numberOfInstructions, $numberOfLabels, $numberOfJumps, $uniqLabels, $lexOrSyntaxErr, $wrongOpCodeErr, $xmlWrite;
+        global $numberOfInstructions, $numberOfLabels, $numberOfJumps, $uniqueLabels, $lexOrSyntaxErr, $wrongOpCodeErr, $xmlWrite;
 
         $instArgErr = "Number of arguments or argument syntax error.
         (Instruction number: $numberOfInstructions, instruction name: $instruction).";
@@ -188,9 +188,9 @@ $uniqLabels = array();     // Array for unique labels for bonus solution
                         if (!checkLabel($lineCodeArray[1]))
                             err_msg($instArgErr, $lexOrSyntaxErr);
                         else {
-                            if (!in_array($lineCodeArray[1], $uniqLabels))  // Was the label counted already?
+                            if (!in_array($lineCodeArray[1], $uniqueLabels))  // Was the label counted already?
                             {
-                                $uniqLabels[] = $lineCodeArray[1];  // This label is counted
+                                $uniqueLabels[] = $lineCodeArray[1];  // This label is counted
                                 $numberOfLabels++;
                             }
                             xmlCreateArgument(1,"label",$lineCodeArray[1]);
@@ -484,6 +484,9 @@ $uniqLabels = array();     // Array for unique labels for bonus solution
             foreach ($argv as $i => $option){
                 if ($i < 1)
                     continue;
+                if ($i == 1)
+                    if (file_put_contents($statsFile, "") == false);  // Clear the content
+                        err_msg("File for statistics cannot be opened", $outputFileErr);
                 switch ($option){
                     case "--stats=$statsFile":
                         break;

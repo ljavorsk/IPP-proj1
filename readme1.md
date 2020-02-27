@@ -57,4 +57,4 @@ Every argument have it's own order number stored in the element `argX` where `X`
 
 The bonus task for this project was the statistics output file, which is mentioned above.
 To count the specific stats, I used global variables named `numberOf*`.
-If the program ends successfully, statistics are then appended to the file specified in `--stats` argument.
+If the program ends successfully, the output file is cleared and the statistics are then appended in the same order as user put it.
