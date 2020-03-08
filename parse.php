@@ -395,7 +395,6 @@ $uniqueLabels = array();     // Array for unique labels for bonus solution
             return err_msg("--help cannot take any more arguments.", $wrongParamErr);
         }
     }
-
     $input = fopen("php://stdin","r");
     if ($input === false)
         err_msg("Failed to read from stdin", $inputFileErr);
@@ -480,30 +479,30 @@ $uniqueLabels = array();     // Array for unique labels for bonus solution
     if (count($argv) >= 2){
         if (preg_grep('/--stats=.*/', $argv)){
             $statsFile = $my_args["stats"];
-
+            if (file_put_contents($statsFile,"") === false){       // Clear the content
+                err_msg("File for statistics cannot be opened", $outputFileErr);
+            }
+        
             foreach ($argv as $i => $option){
                 if ($i < 1)
                     continue;
-                if ($i == 1)
-                    if (file_put_contents($statsFile, "") == false);  // Clear the content
-                        err_msg("File for statistics cannot be opened", $outputFileErr);
                 switch ($option){
                     case "--stats=$statsFile":
                         break;
                     case "--loc":
-                        if (file_put_contents($statsFile, "$numberOfInstructions\n",FILE_APPEND) == false)
+                        if (file_put_contents($statsFile, "$numberOfInstructions\n",FILE_APPEND) === false)
                             err_msg("File for statistics cannot be opened", $outputFileErr);
                         break;
                     case "--comments":
-                        if (file_put_contents($statsFile, "$numberOfComments\n",FILE_APPEND) == false)
+                        if (file_put_contents($statsFile, "$numberOfComments\n",FILE_APPEND) === false)
                             err_msg("File for statistics cannot be opened", $outputFileErr);
                         break;
                     case "--labels":
-                        if (file_put_contents($statsFile, "$numberOfLabels\n",FILE_APPEND) == false)
+                        if (file_put_contents($statsFile, "$numberOfLabels\n",FILE_APPEND) === false)
                             err_msg("File for statistics cannot be opened", $outputFileErr);
                         break;
                     case "--jumps":
-                        if (file_put_contents($statsFile, "$numberOfJumps\n",FILE_APPEND) == false)
+                        if (file_put_contents($statsFile, "$numberOfJumps\n",FILE_APPEND) === false)
                             err_msg("File for statistics cannot be opened", $outputFileErr);
                         break;
                     default:
@@ -515,6 +514,7 @@ $uniqueLabels = array();     // Array for unique labels for bonus solution
             err_msg("You're trying to specify stats without '--stats' option", $wrongParamErr);
     }
 
+    fclose($input);
     // End of the XML document
     xmlwriter_end_element($xmlWrite);
     xmlwriter_end_document($xmlWrite);
