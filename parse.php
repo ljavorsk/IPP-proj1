@@ -177,7 +177,7 @@ $uniqueLabels = array();     // Array for unique labels for bonus solution
                                 xmlCreateArgument(1,"var",$lineCodeArray[1]);
                         }
                         else{
-                            $splitArg = explode('@', $lineCodeArray[1]);
+                            $splitArg = explode('@', $lineCodeArray[1], 2);
                             $typeOfArg = $splitArg[0];
                             $valueOfArg = $splitArg[1];
 
@@ -229,7 +229,7 @@ $uniqueLabels = array();     // Array for unique labels for bonus solution
                                 xmlCreateArgument(2,"var",$lineCodeArray[2]);
                         }
                         else{
-                            $splitArg = explode('@', $lineCodeArray[2]);
+                            $splitArg = explode('@', $lineCodeArray[2], 2);
                             $typeOfArg = $splitArg[0];
                             $valueOfArg = $splitArg[1];
 
@@ -279,7 +279,7 @@ $uniqueLabels = array();     // Array for unique labels for bonus solution
                                 xmlCreateArgument(2,"var",$lineCodeArray[2]);
                         }
                         else{
-                            $splitArg = explode('@', $lineCodeArray[2]);
+                            $splitArg = explode('@', $lineCodeArray[2], 2);
                             $typeOfArg = $splitArg[0];
                             $valueOfArg = $splitArg[1];
 
@@ -293,7 +293,7 @@ $uniqueLabels = array();     // Array for unique labels for bonus solution
                                 xmlCreateArgument(3,"var",$lineCodeArray[3]);
                         }
                         else{
-                            $splitArg = explode('@', $lineCodeArray[3]);
+                            $splitArg = explode('@', $lineCodeArray[3], 2);
                             $typeOfArg = $splitArg[0];
                             $valueOfArg = $splitArg[1];
 
@@ -315,7 +315,7 @@ $uniqueLabels = array();     // Array for unique labels for bonus solution
                                 xmlCreateArgument(2,"var",$lineCodeArray[2]);
                         }
                         else{
-                            $splitArg = explode('@', $lineCodeArray[2]);
+                            $splitArg = explode('@', $lineCodeArray[2], 2);
                             $typeOfArg = $splitArg[0];
                             $valueOfArg = $splitArg[1];
 
@@ -329,7 +329,7 @@ $uniqueLabels = array();     // Array for unique labels for bonus solution
                                 xmlCreateArgument(3,"var",$lineCodeArray[3]);
                         }
                         else{
-                            $splitArg = explode('@', $lineCodeArray[3]);
+                            $splitArg = explode('@', $lineCodeArray[3], 2);
                             $typeOfArg = $splitArg[0];
                             $valueOfArg = $splitArg[1];
 
@@ -442,7 +442,8 @@ $uniqueLabels = array();     // Array for unique labels for bonus solution
     // While cycle for whole input
     while (!feof($input)){
         $currentLine = (fgets($input));
-        if (strcmp($currentLine, "\n") == 0 || $currentLine == "")     // Ignore empty lines
+        $tmpCurrentLine = trim($currentLine); // Trims the whitespaces just to verify it's not useless line
+        if (strcmp($currentLine, "\n") == 0 || $currentLine == "" || $tmpCurrentLine == "")     // Ignore empty lines
             continue;
 
         $commentLine = explode('#', $currentLine);
